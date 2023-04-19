@@ -1,4 +1,4 @@
-public class Pair<T, D> {
+class Pair<T, D> {
     protected T first;
     protected D second;
 

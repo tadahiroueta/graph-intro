@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class Graph<T> {
+class Graph<T> {
     Map<T, List<T>> map = new HashMap<>();
 
     Graph(Pair<T, T>[] adjencies, boolean isDirected) {

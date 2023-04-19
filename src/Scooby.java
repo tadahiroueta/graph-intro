@@ -1,7 +1,7 @@
 import java.util.ArrayList;
 import java.util.Scanner;
 
-public class Scooby {
+class Scooby {
     static final String FILENAME = "scooby.dat";
 
     static void scooby(Pair[] adjencies, String trip) {
