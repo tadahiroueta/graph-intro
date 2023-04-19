@@ -1,34 +1,38 @@
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
-public class Graph {
-    Map<String, List<String>> map = new HashMap<>();
+public class Graph<T> {
+    Map<T, List<T>> map = new HashMap<>();
 
-    Graph(String[] adjencies) {
-        for (String adjency : adjencies) {
-            
-            String from = adjency.substring(0, 1);
-            String to = adjency.substring(1, 2);
+    Graph(Pair<T, T>[] adjencies, boolean isDirected) {
+        for (Pair<T, T> adjency : adjencies) {
+        
+            if (!map.containsKey(adjency.first)) map.put(adjency.first, new ArrayList<>());
+            map.get(adjency.first).add(adjency.second);
 
-            if (!map.containsKey(from)) map.put(from, new ArrayList<>());
-            map.get(from).add(to);
-
-            if (!map.containsKey(to)) map.put(to, new ArrayList<>());
-            map.get(to).add(from);
+            if (!isDirected) {
+                if (!map.containsKey(adjency.second)) map.put(adjency.second, new ArrayList<>());
+                map.get(adjency.second).add(adjency.first);
+            }
     }}
 
-    boolean isConnected(List<String> travelled, String from, String to) {
-        if (!map.containsKey(from)) return false;
-        if (from.equals(to)) return true;
-        
-        travelled.add(from);
-        for (String neighbour : map.get(from)) 
-            if (!travelled.contains(neighbour) && isConnected(travelled, neighbour, to)) 
-                return true;
+    Set<T> getConnections(Set<T> connections, T from) {
+        connections.add(from);
+        if (!map.containsKey(from)) return connections;
 
-        return false;
+        for (T neighbour : map.get(from)) 
+            if (!connections.contains(neighbour)) 
+                connections.addAll(getConnections(connections, neighbour));
+
+        return connections;
     }
 
+    Set<T> getConnections(T from) { return getConnections(new HashSet<>(), from); }
+
+    @Override
+    public String toString() { return map.toString(); }
 }
