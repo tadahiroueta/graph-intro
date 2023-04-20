@@ -1,12 +1,12 @@
 import java.util.Objects;
 
-class Pair<T, D> {
-    protected T first;
-    protected D second;
+class Pair<A, B> {
+    protected A first;
+    protected B second;
 
     public Pair() {}
 
-    public Pair(T first, D second) {
+    public Pair(A first, B second) {
         this.first = first;
         this.second = second;
     }
@@ -23,7 +23,5 @@ class Pair<T, D> {
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hash(first, second);
-    }
+    public int hashCode() { return Objects.hash(first, second); }
 }

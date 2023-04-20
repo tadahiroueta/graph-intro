@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class PrimePath {
+class PrimePath {
 
     static Set<Integer> getPrimes(int digitsN) {
         Set<Integer> primes = new HashSet<>();
