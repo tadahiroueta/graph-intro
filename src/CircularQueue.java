@@ -8,13 +8,14 @@ public class CircularQueue<T> implements Queue<T> {
     
     class Node {
         T value;
-        Node next;
+        Node previous, next;
 
         Node(T value) { this.value = value; }
         
-        Node(T value, Node next) { 
-            this.value = value; 
-            this.next = next; 
+        Node(T value, Node previous, Node next) {
+            this.value = value;
+            this.previous = previous;
+            this.next = next;
         }
         
         @Override
@@ -31,10 +32,9 @@ public class CircularQueue<T> implements Queue<T> {
     public boolean contains(Object o) {
         Node start = head;
         do {
-            if (start.value.equals(o)) return true;
-            start = start.next;
-        } while (start != head);        
-        
+            if (head.value.equals(o)) return true;
+            head = head.next;
+        } while (start != head);
         return false;
     }
 
@@ -43,24 +43,31 @@ public class CircularQueue<T> implements Queue<T> {
         Node start = head;
         List<T> list = new ArrayList<>();
         do {
-            list.add(start.value);
-            start = start.next;
+            list.add(head.value);
+            head = head.next;
         } while (start != head);
         return list.toArray();
     }
 
     @Override
     public boolean remove(Object o) {
-        Node start = head;
+        if (isEmpty()) return false;
+        if (size == 1 && head.value.equals(o)) {
+            clear();
+            return true;
+        }
+        T start = head.value;
         do {
-            if (start.next.value.equals(o)) {
-                start.next = start.next.next;
+            if (head.value.equals(o)) {
+                head.previous.next = head.next;
+                head.next.previous = head.previous;
                 size--;
                 return true;
             }
-            start = start.next;
-        } while (start != head);
-        
+            head = head.next;
+        } while (!start.equals(head.value));
+
+        size--;
         return false;
     }
 
@@ -73,7 +80,7 @@ public class CircularQueue<T> implements Queue<T> {
     @Override
     public boolean addAll(Collection<? extends T> c) {
         boolean changed = false;
-        for (T t : c) changed = changed || add(t);
+        for (T t : c) changed = add(t) || changed;
         return changed;
     }
 
@@ -92,23 +99,20 @@ public class CircularQueue<T> implements Queue<T> {
     }
 
     @Override
-    public void clear() { head = null; }
+    public void clear() { 
+        head = null;
+        size = 0;
+    }
 
     @Override
     public boolean add(T e) {
-        if (head == null) {
+        if (isEmpty()) {
             head = new Node(e);
-            head.next = head;
-        } else {
-            Node start = head;
-            do {
-                if (start.next == head) {
-                    start.next = new Node(e, head);
-                    break;
-                }
-                start = start.next;
-            } while (start != head);
-        }
+            head.next = head.previous = head;
+            size++;
+            return true;
+        } 
+        head.previous.next = head.previous = new Node(e, head.previous, head);
         size++;
         return true;
     }
@@ -118,30 +122,40 @@ public class CircularQueue<T> implements Queue<T> {
 
     @Override
     public T remove() {
-        if (head == null) throw new IllegalStateException("Queue is empty");
+        if (isEmpty()) return null;
+        
         T value = head.value;
+        head.previous.next = head.next;
+        head.next.previous = head.previous;
         head = head.next;
         size--;
         return value;
     }
 
     @Override
-    public T poll() { 
-        try { return remove(); }
-        catch (IllegalStateException e) { return null; }
+    public T poll() { return remove(); }
+
+    @Override
+    public T element() { return isEmpty() ? null : head.value; }
+
+    @Override
+    public boolean isEmpty() { return size == 0; }
+
+    @Override
+    public T peek() { return element(); }
+
+    @Override
+    public String toString() {
+        Node start = head;
+        StringBuilder sb = new StringBuilder();
+        do {
+            sb.append(start.value);
+            sb.append(" ");
+            start = start.next;
+        } while (start != head);
+
+        return sb.toString();
     }
-
-    @Override
-    public T element() {
-        if (head == null) throw new IllegalStateException("Queue is empty");
-        return head.value;
-    }
-
-    @Override
-    public boolean isEmpty() { return head == null; }
-
-    @Override
-    public T peek() { return head == null ? null : head.value; }
 
     @Override
     public Iterator<T> iterator() { throw new UnsupportedOperationException("Unimplemented method 'iterator'"); }
