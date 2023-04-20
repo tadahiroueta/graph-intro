@@ -3,6 +3,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
+import java.util.Stack;
 
 class Graph<T> {
     Map<T, Set<T>> map = new HashMap<>();
@@ -51,6 +52,33 @@ class Graph<T> {
             stepN++;
         }
         return -1;
+    }
+
+    Stack<T> getShortestPathA(T from, T to) {
+        Queue<Stack<T>> queue = new CircularQueue<Stack<T>>();
+        Set<T> visited = new HashSet<>();
+
+        Stack<T> stack = new Stack<>();
+        stack.add(from);
+        queue.add(stack);
+        int stepN = 0;
+        while (!queue.isEmpty()) {
+            for (int i = 0, limit = queue.size(); i < limit; i++) {
+                Stack<T> current = queue.poll();
+
+                if (current.peek().equals(to)) return current;
+                if (visited.contains(current.peek()) || !map.containsKey(current.peek())) continue;
+
+                visited.add(current.peek());
+                for (T neighbour : map.get(current.peek())) {
+                    Stack<T> newStack = (Stack<T>) current.clone();
+                    newStack.add(neighbour);
+                    queue.add(newStack);
+                }
+            }
+            stepN++;
+        }
+        return null;
     }
 
     @Override
