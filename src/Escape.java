@@ -82,7 +82,7 @@ class Escape {
         Pair<Trio<Integer, Integer, Integer>, Trio<Integer, Integer, Integer>>[] adjencies =
             getAdjencies(weights);
 
-        Graph<Trio<Integer, Integer, Integer>> graph = new Graph<>(adjencies, false);
+        Graph<Trio<Integer, Integer, Integer>> graph = new Graph<>(adjencies, true);
 
         return graph.getShortestDistanceWeightedNodes(new Trio<>(0, 0, weights[0][0]), new Trio<>(500, 500, weights[SIZE - 1][SIZE - 1]));
 

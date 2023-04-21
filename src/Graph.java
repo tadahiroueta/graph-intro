@@ -12,6 +12,8 @@ class Graph<T> {
         for (Pair<T, T> adjency : adjencies) {
         
             if (!map.containsKey(adjency.first)) map.put(adjency.first, new HashSet<>());
+            if (adjency.second == null) continue; // solitary node
+
             map.get(adjency.first).add(adjency.second);
 
             if (!isDirected) {
@@ -113,6 +115,41 @@ class Graph<T> {
             for (T neighbour : map.get(trio)) queue.add(new Pair<>(neighbour, totalWeight));
         }
         return distances.getOrDefault(to, -1);
+    }
+
+    Map<T, Boolean> getBinaryNetwork(Map<T, Boolean> network, T from, boolean isPositive) {
+        if (network.containsKey(from)) // been here before
+            // null for non-binary network
+            return network.get(from) != isPositive ? null : network; 
+
+        network.put(from, isPositive);
+        for (T neighbour : map.get(from)) {
+            Map<T, Boolean> newNetwork = getBinaryNetwork(network, neighbour, !isPositive);
+            if (newNetwork == null) return null; // non-binary network
+            network = newNetwork;
+        }
+        return network;
+    }
+
+    Set<T> getBinaryNetwork(T from) {
+        Map<T, Boolean> network = getBinaryNetwork(new HashMap<>(), from, true); 
+        return network != null ? network.keySet() : new HashSet<>();
+    }
+
+    int getNetworksN() {
+        Set<T> nodes = new HashSet<>(map.keySet());
+        for (int i = 0; true; i++) {
+            if (nodes.isEmpty()) return i;
+
+            T node = nodes.iterator().next();
+            Set<T> network = getBinaryNetwork(node);
+            if (network.isEmpty()) return -1; 
+            nodes.removeAll(network);
+    }}
+
+    long getBinaryCompinationsN() {
+        int networksN = getNetworksN();
+        return networksN == -1 ? -1 : (long) Math.pow(2, networksN); 
     }
 
     @Override
