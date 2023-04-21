@@ -73,6 +73,21 @@ class Escape {
         return adjencies.toArray(new Pair[0]);
     }
 
+    static int lowest(String[] harmful, String[] deadly) {
+        Pair<Pair<Integer, Integer>, Pair<Integer, Integer>>[] harmfulBounds = getBounds(harmful),
+            deadlyBounds = getBounds(deadly);    
+
+        int[][] weights = getWeights(harmfulBounds, deadlyBounds);
+
+        Pair<Trio<Integer, Integer, Integer>, Trio<Integer, Integer, Integer>>[] adjencies =
+            getAdjencies(weights);
+
+        Graph<Trio<Integer, Integer, Integer>> graph = new Graph<>(adjencies, false);
+
+        return graph.getShortestDistanceWeightedNodes(new Trio<>(0, 0, weights[0][0]), new Trio<>(500, 500, weights[SIZE - 1][SIZE - 1]));
+
+    }
+
     public static void main(String[] args) {
         String[] harmful = {
             "468 209 456 32",
@@ -150,17 +165,7 @@ class Escape {
                 "56 69 177 428",
                 "5 92 61 247"
             };
-
-        Pair<Pair<Integer, Integer>, Pair<Integer, Integer>>[] harmfulBounds = getBounds(harmful),
-            deadlyBounds = getBounds(deadly);    
-
-        int[][] weights = getWeights(harmfulBounds, deadlyBounds);
-
-        Pair<Trio<Integer, Integer, Integer>, Trio<Integer, Integer, Integer>>[] adjencies =
-            getAdjencies(weights);
-
-        Graph<Trio<Integer, Integer, Integer>> graph = new Graph<>(adjencies, false);
-
-        System.out.println(graph.getShortestDistanceWeightedNodes(new Trio<>(0, 0, weights[0][0]), new Trio<>(500, 500, weights[SIZE - 1][SIZE - 1])));
+        
+            System.out.println(lowest(harmful, deadly));
     }
 }
