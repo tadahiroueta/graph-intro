@@ -33,7 +33,7 @@ class Graph<T> {
 
     Set<T> getConnections(T from) { return getConnections(new HashSet<>(), from); }
 
-    int getShortestPath(T from, T to) {
+    int getShortestDistance(T from, T to) {
         Queue<T> queue = new CircularQueue<T>();
         Set<T> visited = new HashSet<>();
 
@@ -54,16 +54,14 @@ class Graph<T> {
         return -1;
     }
 
-    Stack<T> getShortestPathA(T from, T to) {
+    Stack<T> getShortestPath(T from, T to) {
         Queue<Stack<T>> queue = new CircularQueue<Stack<T>>();
         Set<T> visited = new HashSet<>();
 
         Stack<T> stack = new Stack<>();
         stack.add(from);
         queue.add(stack);
-        int stepN = 0;
-        while (!queue.isEmpty()) {
-            for (int i = 0, limit = queue.size(); i < limit; i++) {
+        while (!queue.isEmpty()) for (int i = 0, limit = queue.size(); i < limit; i++) {
                 Stack<T> current = queue.poll();
 
                 if (current.peek().equals(to)) return current;
@@ -71,14 +69,50 @@ class Graph<T> {
 
                 visited.add(current.peek());
                 for (T neighbour : map.get(current.peek())) {
+                    @SuppressWarnings("unchecked")
                     Stack<T> newStack = (Stack<T>) current.clone();
                     newStack.add(neighbour);
                     queue.add(newStack);
-                }
-            }
-            stepN++;
-        }
+        }}
         return null;
+    }
+
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    int getShortestDistanceWeightedNodes(T from, T to) {
+        if (!(from instanceof Trio)) throw new IllegalArgumentException("T must be a Trio");
+
+        Queue<Pair<T, Integer>> queue = new CircularQueue<>();
+        Map<T, Integer> distances = new HashMap<>();
+        
+        queue.add(new Pair<>(from, 0));
+        
+        while (!queue.isEmpty()) {
+            Pair<Trio, Integer> current = (Pair<Trio, Integer>) queue.poll();
+            Trio trio = current.first;
+            int currentWeight = (int) trio.third;
+            int totalWeight = current.second + currentWeight;
+            if (trio.equals(from)) currentWeight = totalWeight = 0;
+
+            if (currentWeight == Integer.MAX_VALUE) continue; // too heavy
+
+            // found one solution
+            if (trio.equals(to)) {
+                int previousSolution = distances.getOrDefault(trio, Integer.MAX_VALUE);
+                distances.put((T) trio, Math.min(totalWeight, previousSolution));
+                continue;
+            }
+
+            if (!map.containsKey(trio)) continue; // nowhere to go
+
+            // if we've been here before and it was lighter before
+            int previousDistance = distances.getOrDefault(trio, Integer.MAX_VALUE);
+            if (totalWeight >= previousDistance) continue;
+            distances.put((T) trio, totalWeight);
+            
+            // keep going
+            for (T neighbour : map.get(trio)) queue.add(new Pair<>(neighbour, totalWeight));
+        }
+        return distances.getOrDefault(to, -1);
     }
 
     @Override

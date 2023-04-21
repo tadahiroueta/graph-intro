@@ -25,9 +25,10 @@ class BinaryMaze {
         for (int i = 0; i < maze.length; i++) for (int j = 0; j < maze[0].length; j++) 
             if (maze[i][j]) adjencies.addAll(getNeighbours(maze, new Pair<>(i, j)));
 
+        @SuppressWarnings("unchecked")
         Graph<Pair<Integer, Integer>> graph = new Graph<Pair<Integer, Integer>>(adjencies.toArray(new Pair[0]), true);
 
-        System.out.println(graph.getShortestPath(from, to));
+        System.out.println(graph.getShortestDistance(from, to));
     }
 
     public static void main(String[] args) {

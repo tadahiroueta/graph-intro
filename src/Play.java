@@ -24,6 +24,7 @@ class Play {
             int m = firstLine.nextInt(),
                 l = firstLine.nextInt();
 
+            @SuppressWarnings("unchecked")
             Pair<Integer, Integer>[] adjencies = new Pair[m];
             for (int j = 0; j < m; j++) {
                 Scanner line = new Scanner(in.nextLine());

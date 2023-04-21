@@ -21,6 +21,7 @@ class PrimePath {
             .collect(Collectors.toSet());
     }
 
+    @SuppressWarnings("unchecked")
     static Pair<Integer, Integer>[] getAdjencies(Set<Integer> primes) {
         List<Pair<Integer, Integer>> adjencies = new ArrayList<>();
         
@@ -39,8 +40,8 @@ class PrimePath {
     }
 
     static void primePath(Graph<Integer> graph, int from, int to) { 
+        System.out.println(graph.getShortestDistance(from, to));
         System.out.println(graph.getShortestPath(from, to));
-        System.out.println(graph.getShortestPathA(from, to));
     }
 
     public static void main(String[] args) {

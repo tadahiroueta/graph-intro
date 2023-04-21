@@ -161,5 +161,6 @@ public class CircularQueue<T> implements Queue<T> {
     public Iterator<T> iterator() { throw new UnsupportedOperationException("Unimplemented method 'iterator'"); }
 
     @Override
+    @SuppressWarnings("hiding")
     public <T> T[] toArray(T[] a) { throw new UnsupportedOperationException("Unimplemented method 'toArray'"); }
 }
